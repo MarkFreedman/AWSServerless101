@@ -1,0 +1,10 @@
+{
+  "name": "serverless-framework-example",
+  "version": "1.0.0",
+  "description": "Serverless Framework example for CRUD operations on DynamoDB",
+  "author": "Mark Freedman",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^2.0.3"
+  }
+}

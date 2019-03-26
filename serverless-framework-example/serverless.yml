@@ -1,0 +1,85 @@
+service: serverless-framework-example
+
+provider:
+  name: aws
+  profile: serverless
+  runtime: nodejs8.10
+  stage: dev
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  log:
+    handler: music/log.handler
+    events:
+      - schedule:
+          rate(2 minutes)
+
+  create:
+    handler: music/create.create
+    events:
+      - http:
+          path: music
+          method: post
+          cors: true
+
+  list:
+    handler: music/list.list
+    events:
+      - http:
+          path: music
+          method: get
+          cors: true
+
+  get:
+    handler: music/get.get
+    events:
+      - http:
+          path: music/{id}
+          method: get
+          cors: true
+
+  update:
+    handler: music/update.update
+    events:
+      - http:
+          path: music/{id}
+          method: put
+          cors: true
+
+  delete:
+    handler: music/delete.delete
+    events:
+      - http:
+          path: music/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    MusicTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}

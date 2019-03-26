@@ -24,8 +24,8 @@
   "author": "Fernando Medina Corey",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.81.0",
+    "request": "^2.88.0",
     "serverless-finch": "^2.4.2",
-    "twilio": "^3.4.0"
+    "twilio": "^3.29.2"
   }
 }
